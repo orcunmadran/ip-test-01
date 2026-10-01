@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AstroKozmos | Burç Bulucu ve Detaylı Astroloji Rehberi</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Cinzel & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            cinzel: ['Cinzel', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            cosmic: {
+              900: '#060714',
+              800: '#0d102b',
+              700: '#151945',
+              600: '#1f2461',
+              accent: '#d4af37',
+              gold: '#f3c959',
+              purple: '#9d4edd',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060714;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a2c5a;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4a4e9e;
+    }
+
+    /* Ambient Glow Effects */
+    .glow-gold {
+      box-shadow: 0 0 25px -5px rgba(243, 201, 89, 0.35);
+    }
+    .glow-sign {
+      filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6));
+    }
+    .text-glow {
+      text-shadow: 0 0 18px rgba(243, 201, 89, 0.45);
+    }
+
+    /* Cosmic Glassmorphism */
+    .glass-card {
+      background: rgba(13, 16, 43, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(212, 175, 55, 0.18);
+    }
+    .glass-input {
+      background: rgba(9, 11, 30, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input:focus {
+      border-color: #f3c959;
+      box-shadow: 0 0 12px rgba(243, 201, 89, 0.3);
+    }
+
+    /* Subtle Animated Orbit */
+    @keyframes spin-slow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spin-slow 40s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-cosmic-900 text-slate-100 font-sans min-h-screen relative overflow-x-hidden selection:bg-cosmic-gold selection:text-cosmic-900">
+
+  <!-- Starfield Canvas Background -->
+  <canvas id="starfield" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Ambient Light Orbs -->
+  <div class="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] rounded-full bg-purple-900/20 blur-[130px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-amber-500/15 blur-[140px] pointer-events-none z-0"></div>
+
+  <div class="relative z-10 flex flex-col min-h-screen">
+    
+    <!-- Top Bar / Header -->
+    <header class="border-b border-white/10 backdrop-blur-md bg-cosmic-900/60 sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <a href="#" class="flex items-center space-x-3 group">
+          <div class="w-10 h-10 rounded-full border border-cosmic-gold/50 flex items-center justify-center bg-cosmic-800/80 group-hover:scale-105 transition-transform duration-300">
+            <i class="fa-solid fa-moon text-cosmic-gold text-lg"></i>
+          </div>
+          <div>
+            <h1 class="font-cinzel text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-100">
+              ASTROKOZMOS
+            </h1>
+            <p class="text-[10px] tracking-wider text-slate-400 uppercase">Kişisel Burç ve Yıldız Haritası Rehberi</p>
+          </div>
+        </a>
+        <div class="flex items-center gap-2 text-xs text-amber-200/80 bg-cosmic-800/70 border border-amber-500/20 px-3 py-1.5 rounded-full">
+          <i class="fa-solid fa-sparkles text-cosmic-gold"></i>
+          <span class="hidden sm:inline">Statik & Anlık Hesaplama</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+
+      <!-- Hero Introduction -->
+      <section class="text-center max-w-2xl mx-auto my-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-amber-300 bg-amber-500/10 border border-amber-500/30 mb-4">
+          <i class="fa-solid fa-compass"></i> Doğum Gününü Seç, Akademik Başarının Sırrını Al!
+        </div>
+        <h2 class="font-cinzel text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-wide text-glow">
+          Burcunuzu Keşfedin
+        </h2>
+        <p class="text-slate-400 mt-3 text-sm sm:text-base leading-relaxed">
+          Doğduğunuz gün ve ayı belirleyerek Güneş burcunuzu anında hesaplayın; elementiniz, karakteristik özellikleriniz, aşk ve kariyer dinamiklerinizi inceleyin.
+        </p>
+      </section>
+
+      <!-- Interactive Input Form Section -->
+      <section class="max-w-xl mx-auto mb-12">
+        <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+          <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <form id="zodiacForm" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Day Selection -->
+              <div>
+                <label for="birthDay" class="block text-xs font-semibold uppercase tracking-wider text-amber-200/90 mb-2">
+                  <i class="fa-regular fa-calendar-day mr-1"></i> Doğum Günü
+                </label>
+                <div class="relative">
+                  <select id="birthDay" class="glass-input w-full px-4 py-3.5 rounded-xl text-white outline-none cursor-pointer text-sm transition appearance-none pr-10" required>
+                    <option value="" disabled selected class="bg-cosmic-800 text-slate-400">Gün Seçiniz</option>
+                    <!-- Days dynamically inserted or 1-31 -->
+                  </select>
+                  <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                </div>
+              </div>
+
+              <!-- Month Selection -->
+              <div>
+                <label for="birthMonth" class="block text-xs font-semibold uppercase tracking-wider text-amber-200/90 mb-2">
+                  <i class="fa-regular fa-calendar mr-1"></i> Doğum Ayı
+                </label>
+                <div class="relative">
+                  <select id="birthMonth" class="glass-input w-full px-4 py-3.5 rounded-xl text-white outline-none cursor-pointer text-sm transition appearance-none pr-10" required>
+                    <option value="" disabled selected class="bg-cosmic-800 text-slate-400">Ay Seçiniz</option>
+                    <option value="1" class="bg-cosmic-800">Ocak</option>
+                    <option value="2" class="bg-cosmic-800">Şubat</option>
+                    <option value="3" class="bg-cosmic-800">Mart</option>
+                    <option value="4" class="bg-cosmic-800">Nisan</option>
+                    <option value="5" class="bg-cosmic-800">Mayıs</option>
+                    <option value="6" class="bg-cosmic-800">Haziran</option>
+                    <option value="7" class="bg-cosmic-800">Temmuz</option>
+                    <option value="8" class="bg-cosmic-800">Ağustos</option>
+                    <option value="9" class="bg-cosmic-800">Eylül</option>
+                    <option value="10" class="bg-cosmic-800">Ekim</option>
+                    <option value="11" class="bg-cosmic-800">Kasım</option>
+                    <option value="12" class="bg-cosmic-800">Aralık</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="formFeedback" class="hidden p-3 rounded-lg bg-red-900/30 border border-red-500/40 text-red-200 text-xs flex items-center gap-2">
+              <i class="fa-solid fa-circle-exclamation text-red-400"></i>
+              <span id="feedbackText">Geçerli bir tarih seçiniz.</span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full relative group overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-amber-400">
+              <span class="absolute inset-0 bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-500 rounded-xl transition-all duration-300 group-hover:opacity-90"></span>
+              <span class="relative block py-3.5 px-6 rounded-xl bg-cosmic-900 text-amber-200 font-semibold text-sm transition-all duration-300 group-hover:bg-transparent group-hover:text-cosmic-900 flex items-center justify-center gap-2 tracking-wide font-cinzel">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                BURCUMU ÖĞREN
+              </span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Zodiac Result Display (Initially Hidden or shows sample) -->
+      <section id="resultSection" class="hidden transition-all duration-500 ease-out mb-16 scroll-mt-24">
+        <div class="glass-card rounded-3xl p-6 sm:p-10 border-cosmic-gold/30 glow-gold relative overflow-hidden">
+          
+          <!-- Background Decorative Star Icon -->
+          <div id="bgWatermark" class="absolute -right-8 -bottom-10 text-[180px] text-white/5 pointer-events-none font-cinzel select-none">
+            ♈
+          </div>
+
+          <!-- Top Result Header -->
+          <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 pb-8 border-b border-white/10">
+            <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+              <!-- Big Glyph / Symbol -->
+              <div class="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-amber-400/20 to-purple-600/30 border border-cosmic-gold/50 flex items-center justify-center shadow-lg">
+                <span id="resSignGlyph" class="text-5xl font-cinzel text-cosmic-gold glow-sign">♈</span>
+                <span id="resElementBadge" class="absolute -bottom-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-cosmic-900 shadow">
+                  Ateş
+                </span>
+              </div>
+              <div>
+                <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                  <h3 id="resSignName" class="font-cinzel text-3xl sm:text-4xl font-black tracking-wider text-white">Koç Burcu</h3>
+                  <span id="resLatinName" class="text-xs uppercase text-slate-400 font-mono tracking-widest">(Aries)</span>
+                </div>
+                <p id="resDateRange" class="text-amber-200/90 text-sm font-medium flex items-center justify-center sm:justify-start gap-1.5">
+                  <i class="fa-regular fa-clock"></i> 21 Mart - 19 Nisan
+                </p>
+                <p id="resMotto" class="text-xs italic text-slate-300 mt-2 font-serif">"Ben varım, harekete geçer ve öncülük ederim."</p>
+              </div>
+            </div>
+
+            <!-- Key Cosmic Metrics Pill Row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full md:w-auto">
+              <div class="glass-input p-2.5 rounded-xl text-center min-w-[85px]">
+                <p class="text-[10px] uppercase text-slate-400">Yönetici</p>
+                <p id="resPlanet" class="text-xs font-bold text-amber-200 mt-0.5">Mars</p>
+              </div>
+              <div class="glass-input p-2.5 rounded-xl text-center min-w-[85px]">
+                <p class="text-[10px] uppercase text-slate-400">Nitelik</p>
+                <p id="resModality" class="text-xs font-bold text-purple-200 mt-0.5">Öncü</p>
+              </div>
+              <div class="glass-input p-2.5 rounded-xl text-center min-w-[85px]">
+                <p class="text-[10px] uppercase text-slate-400">Uğurlu Taş</p>
+                <p id="resStone" class="text-xs font-bold text-emerald-300 mt-0.5">Elmas</p>
+              </div>
+              <div class="glass-input p-2.5 rounded-xl text-center min-w-[85px]">
+                <p class="text-[10px] uppercase text-slate-400">Uğurlu Renk</p>
+                <p id="resColor" class="text-xs font-bold text-rose-300 mt-0.5">Kırmızı</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deep Astrological Tabs & Details -->
+          <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left 2 Cols: Main Characteristic Breakdown -->
+            <div class="lg:col-span-2 space-y-6">
+              
+              <!-- General Personality Summary -->
+              <div class="glass-input p-5 rounded-2xl border-white/5">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-amber-300 mb-2 flex items-center gap-2">
+                  <i class="fa-solid fa-feather-pointed"></i> Genel Karakter Analizi
+                </h4>
+                <p id="resPersonality" class="text-slate-300 text-sm leading-relaxed">
+                  Koç burcu Zodyak'ın ilk burcudur. Cesaret, enerji, liderlik ve yüksek girişimcilik ruhuna sahiptir. Yeni başlangıçları sever, doğrudan ve dürüst tavırlarıyla tanınır.
+                </p>
+              </div>
+
+              <!-- Strengths and Challenges Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="glass-input p-4 rounded-xl border-emerald-500/20 bg-emerald-950/10">
+                  <h5 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-check-circle"></i> Güçlü & Olumlu Yönler
+                  </h5>
+                  <ul id="resStrengths" class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li>Gözü pek ve cesur liderlik</li>
+                    <li>Yüksek motivasyon ve enerji</li>
+                    <li>Açık sözlü ve samimi yaklaşım</li>
+                  </ul>
+                </div>
+                
+                <div class="glass-input p-4 rounded-xl border-rose-500/20 bg-rose-950/10">
+                  <h5 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Gelişime Açık / Zor Yönler
+                  </h5>
+                  <ul id="resWeaknesses" class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li>Sabırsızlık ve acelecilik</li>
+                    <li>Çabuk öfkelenme eğilimi</li>
+                    <li>Detayları çabuk sıkılıp atlama</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Love & Career Cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="glass-input p-4 rounded-xl">
+                  <h5 class="text-xs font-bold uppercase tracking-wider text-pink-300 mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-heart"></i> Aşk & İlişkiler
+                  </h5>
+                  <p id="resLove" class="text-xs text-slate-300 leading-relaxed">
+                    İlişkilerinde tutkulu, coşkulu ve fethetmeyi seven bir karaktere sahiptir. Partnerinden dürüstlük ve dinamizm bekler.
+                  </p>
+                </div>
+                <div class="glass-input p-4 rounded-xl">
+                  <h5 class="text-xs font-bold uppercase tracking-wider text-sky-300 mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-briefcase"></i> Kariyer & Para
+                  </h5>
+                  <p id="resCareer" class="text-xs text-slate-300 leading-relaxed">
+                    Özgürce inisiyatif alabileceği, rekabetçi ve yönlendirici liderlik rollerinde parlar. Monoton masa başı işlerden hızla sıkılır.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right 1 Col: Cosmic Harmonies & Quick Facts -->
+            <div class="space-y-6">
+              
+              <!-- Compatibility Card -->
+              <div class="glass-input p-5 rounded-2xl border-white/5 flex flex-col justify-between">
+                <div>
+                  <h4 class="text-sm font-bold uppercase tracking-wider text-amber-300 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-arrows-split-up-and-left"></i> Burç Uyumu
+                  </h4>
+                  <p class="text-xs text-slate-400 mb-4">Ateş ve Hava elementlerinin dengesi ile mükemmel ahenk sağlar.</p>
+                  
+                  <div class="mb-4">
+                    <span class="text-[11px] font-semibold text-emerald-400 block mb-1.5">En Yüksek Uyum:</span>
+                    <div id="resBestMatches" class="flex flex-wrap gap-1.5">
+                      <!-- Tags -->
+                    </div>
+                  </div>
+
+                  <div>
+                    <span class="text-[11px] font-semibold text-amber-400 block mb-1.5">Zorlayıcı / Geliştirici Uyum:</span>
+                    <div id="resChallengingMatches" class="flex flex-wrap gap-1.5">
+                      <!-- Tags -->
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+                  <span>Uğurlu Rakam:</span>
+                  <span id="resLuckyNumber" class="text-amber-200 font-bold font-mono text-sm">9</span>
+                </div>
+              </div>
+
+              <!-- Cosmic Quote -->
+              <div class="glass-input p-4 rounded-2xl border-cosmic-purple/30 bg-purple-900/10 text-center">
+                <i class="fa-solid fa-quote-left text-cosmic-gold/40 text-lg mb-2"></i>
+                <p id="resAdvice" class="text-xs text-slate-300 italic leading-relaxed">
+                  "Kendi içindeki kıvılcımı sabırla beslediğinde, dünyayı aydınlatacak bir ışığa dönüşürsün."
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Explore All 12 Signs Section -->
+      <section class="mt-12">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-circle-nodes text-cosmic-gold text-lg"></i>
+              Tüm 12 Burcu İnceleyin
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">İstediğiniz burca tıklayarak özelliklerini doğrudan görüntüleyebilirsiniz.</p>
+          </div>
+          <!-- Element Filters -->
+          <div class="flex items-center gap-1.5 bg-cosmic-800/80 p-1 rounded-xl border border-white/10 text-xs">
+            <button class="filter-btn active px-3 py-1.5 rounded-lg font-medium transition text-amber-300 bg-cosmic-700" data-element="all">Tümü</button>
+            <button class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition" data-element="Ateş">Ateş</button>
+            <button class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition" data-element="Toprak">Toprak</button>
+            <button class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition" data-element="Hava">Hava</button>
+            <button class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition" data-element="Su">Su</button>
+          </div>
+        </div>
+
+        <!-- Signs Grid -->
+        <div id="signsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </section>
+
+      <!-- Astro Facts Card / Educational Footer info -->
+      <section class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="glass-card p-5 rounded-2xl">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-sm mb-3">
+            <i class="fa-solid fa-fire"></i>
+          </div>
+          <h4 class="text-sm font-semibold text-white mb-1">Ateş & Toprak</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Ateş burçları (Koç, Aslan, Yay) eylem ve tutkuyu; Toprak burçları (Boğa, Başak, Oğlak) ise istikrar ve pratikliği temsil eder.
+          </p>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+          <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-300 flex items-center justify-center text-sm mb-3">
+            <i class="fa-solid fa-wind"></i>
+          </div>
+          <h4 class="text-sm font-semibold text-white mb-1">Hava & Su</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Hava burçları (İkizler, Terazi, Kova) iletişim ve zekayı; Su burçları (Yengeç, Akrep, Balık) ise derin sezgileri ve duyguları taşır.
+          </p>
+        </div>
+        <div class="glass-card p-5 rounded-2xl">
+          <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center text-sm mb-3">
+            <i class="fa-solid fa-sun"></i>
+          </div>
+          <h4 class="text-sm font-semibold text-white mb-1">Güneş Burcu Nedir?</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Doğduğunuz anda Güneş'in gökyüzündeki koordinatıdır. Öz benliğinizi, temel yaşam enerjinizi ve karakterinizin ana omurgasını simgeler.
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8 mt-16 text-center text-xs text-slate-500">
+      <div class="max-w-6xl mx-auto px-4">
+        <p class="tracking-wide">© AstroKozmos — Zodyak ve Astroloji Rehberi. Saf HTML, CSS ve JavaScript ile çalışır.</p>
+        <p class="mt-1 text-[11px] text-slate-600">Herhangi bir yapay zeka bağlantısına ihtiyaç duymaz, tüm hesaplamalar tarayıcınızda anlık yapılır.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // 12 Comprehensive Zodiac Sign Objects with authentic astrological info
+    const ZODIAC_DATA = [
+      {
+        id: "koc",
+        name: "Koç",
+        latin: "Aries",
+        glyph: "♈",
+        element: "Ateş",
+        modality: "Öncü",
+        planet: "Mars",
+        dates: "21 Mart - 19 Nisan",
+        stone: "Elmas & Akik",
+        color: "Alev Kırmızısı",
+        luckyNumber: "9, 1",
+        motto: "“Ben varım, harekete geçer ve öncülük ederim.”",
+        personality: "Zodyak çarkının ilk öncüsü olan Koç burcu; yüksek enerjisi, cesur atılımları ve bitmek bilmeyen yaşama sevinci ile bilinir. Haksızlığa tahammül edemez ve hedefine doğrudan ilerler.",
+        strengths: ["Liderlik ve korkusuz atılımlar", "Yüksek yaşam sevinci ve dürüstlük", "Zorluklar karşısında yılmayan azim"],
+        weaknesses: ["Sabırsız ve aceleci yaklaşımlar", "Çabuk parlayıp sönen öfke", "Detaylarda sıkılma eğilimi"],
+        love: "Tutkulu, jestlerle dolu ve heyecanı her an zirvede tutmak isteyen bir partnerdir. Rutinleşen ilişkiler ona göre değildir.",
+        career: "Kendi girişimini başlatabileceği, karar verici olduğu ve rekabetçi ortam barındıran mesleklerde zirveye oynar.",
+        bestMatches: ["Aslan", "Yay", "İkizler", "Kova"],
+        challengingMatches: ["Yengeç", "Oğlak"],
+        advice: "Bazen hızını biraz yavaşlatıp etrafındaki güzelliklerin ve detayların tadını çıkarmayı öğrenmelisin."
+      },
+      {
+        id: "boga",
+        name: "Boğa",
+        latin: "Taurus",
+        glyph: "♉",
+        element: "Toprak",
+        modality: "Sabit",
+        planet: "Venüs",
+        dates: "20 Nisan - 20 Mayıs",
+        stone: "Zümrüt & Safir",
+        color: "Zümrüt Yeşili & Toprak Tonları",
+        luckyNumber: "6, 4",
+        motto: "“Sahip olduğum değerleri korur ve güzelleştiririm.”",
+        personality: "Sarsılmaz sabrı, güvenilirliği ve estetik zevki ile tanınan Boğa burcu; konforuna, kalıcı güvenliğe ve hayatın sunduğu duyusal zevklere derin saygı duyar. Sadakati ve üretkenliği benzersizdir.",
+        strengths: ["Kaya gibi sağlam güvenilirlik", "Olağanüstü sabır ve çalışma disiplini", "Estetik algı ve lüks anlayışı"],
+        weaknesses: ["İnatçılık ve değişime direnç", "Konfor alanına aşırı bağlanma", "Kıskançlık veya sahiplenicilik"],
+        love: "İlişkide güven, huzur ve fiziksel yakınlık arar. Sevdiği kişiyi sonsuz bir şefkat ve koruma kalkanıyla sarar.",
+        career: "Finans, mimarlık, sanat, gastronomi ve köklü işletmelerde güven veren kararlılığıyla büyük başarılar elde eder.",
+        bestMatches: ["Başak", "Oğlak", "Yengeç", "Balık"],
+        challengingMatches: ["Aslan", "Kova"],
+        advice: "Değişimin hayatın doğal akışı olduğunu kabullenmek seni daha da özgür kılacaktır."
+      },
+      {
+        id: "ikizler",
+        name: "İkizler",
+        latin: "Gemini",
+        glyph: "♊",
+        element: "Hava",
+        modality: "Değişken",
+        planet: "Merkür",
+        dates: "21 Mayıs - 20 Haziran",
+        stone: "Akik & Sitrin",
+        color: "Canlı Sarı & Açık Mavi",
+        luckyNumber: "5, 3",
+        motto: "“Düşünürüm, öğrenirim ve anlatırım.”",
+        personality: "Meraklı, zeki, hızlı düşünen ve kelimelerin efendisi olan İkizler; aynı anda onlarca farklı konuya ilgi duyabilen olağanüstü bir zihinsel esnekliğe sahiptir. Sosyal çevrenin neşesidir.",
+        strengths: ["Hızlı zeka ve yüksek adaptasyon", "Mükemmel iletişim ve ikna kabiliyeti", "Geniş vizyon ve çok yönlülük"],
+        weaknesses: ["Odaklanma güçlüğü ve kararsızlık", "Çabuk sıkılma ve yüzeyselleşme", "Duygusal konularda mantığa kaçma"],
+        love: "Onun kalbine giden yol önce zihninden geçer. Esprili, derin sohbetler edebileceği ve özgürlüğünü kısıtlamayan partnerlere tutulur.",
+        career: "Gazetecilik, pazarlama, yazarlık, yazılım, halkla ilişkiler ve diplomasi gibi hareketli işlerde harikalar yaratır.",
+        bestMatches: ["Terazi", "Kova", "Koç", "Aslan"],
+        challengingMatches: ["Başak", "Balık"],
+        advice: "Zihnindeki onlarca projeden birini seçip sonuna kadar götürmek sana hayal bile edemeyeceğin kapılar açar."
+      },
+      {
+        id: "yengec",
+        name: "Yengeç",
+        latin: "Cancer",
+        glyph: "♋",
+        element: "Su",
+        modality: "Öncü",
+        planet: "Ay",
+        dates: "21 Haziran - 22 Temmuz",
+        stone: "Aytaşı & İnci",
+        color: "Gümüşi Beyaz & Deniz Mavisi",
+        luckyNumber: "2, 7",
+        motto: "“Hissederim, korur ve kollarım.”",
+        personality: "Derin sezgileri, koruyucu içgüdüleri ve sonsuz şefkatiyle Yengeç burcu; sevdikleri için sıcacık bir yuva kurar. Güçlü hafızası ve empati yeteneğiyle insanların ruhunu bir ayna gibi yansıtır.",
+        strengths: ["Benzersiz empati ve duygusal zeka", "Korumacı ve vefakar dostluk", "Geniş hayal gücü ve derin bağlılık"],
+        weaknesses: ["Aşırı alınganlık ve duygu dalgalanmaları", "Geçmişe takılıp kalma eğilimi", "Kabuğuna çekilip küsme alışkanlığı"],
+        love: "Gerçek ve koşulsuz aşkın peşindedir. Partnerine karşı son derece fedakar, romantik ve sahiplenicidir.",
+        career: "Psikoloji, sağlık, eğitim, insan kaynakları, gastronomi ve gayrimenkul alanlarında yüksek empati gücüyle parlar.",
+        bestMatches: ["Akrep", "Balık", "Boğa", "Başak"],
+        challengingMatches: ["Koç", "Terazi"],
+        advice: "Başkalarını iyileştirmeye çalışırken kendi duygusal sınırlarını ve ihtiyaçlarını ihmal etme."
+      },
+      {
+        id: "aslan",
+        name: "Aslan",
+        latin: "Leo",
+        glyph: "♌",
+        element: "Ateş",
+        modality: "Sabit",
+        planet: "Güneş",
+        dates: "23 Temmuz - 22 Ağustos",
+        stone: "Yakut & Kehribar",
+        color: "Altın Sarısı & Güneş Turuncusu",
+        luckyNumber: "1, 5",
+        motto: "“Işıldarım, yaratır ve yönetirim.”",
+        personality: "Doğuştan karizmatik, cömert ve asil duruşuyla Aslan burcu; girdiği her ortamı aydınlatır. Kendine güveni, sanatsal yaratıcılığı ve sevdiklerine kol kanat geren yüce gönüllülüğüyle saygı uyandırır.",
+        strengths: ["Cömertlik ve doğal liderlik aurası", "Yüksek özgüven ve sahne ışığı", "Sadakat ve vefa duygusu"],
+        weaknesses: ["Eleştiriye tahammülsüzlük ve gurur", "Sürekli ilgi ve övgü beklentisi", "Otoriterleşme riski"],
+        love: "Aşkı bir peri masalı gibi yaşatır. Büyük jestler, gösterişli sürprizler ve koşulsuz bir gururla partnerini yüceltir.",
+        career: "Yöneticilik, eğlence sektörü, tasarım, siyaset, sahne sanatları ve lüks marka yönetimi için biçilmiş kaftandır.",
+        bestMatches: ["Koç", "Yay", "İkizler", "Terazi"],
+        challengingMatches: ["Boğa", "Akrep"],
+        advice: "Tevazu göstermek ışığını söndürmez; aksine etrafındakilerin sana olan sevgisini daha da büyütür."
+      },
+      {
+        id: "basak",
+        name: "Başak",
+        latin: "Virgo",
+        glyph: "♍",
+        element: "Toprak",
+        modality: "Değişken",
+        planet: "Merkür",
+        dates: "23 Ağustos - 22 Eylül",
+        stone: "Karnelyan & Yeşim",
+        color: "Koyu Yeşil, Bej & Toprak Grisi",
+        luckyNumber: "5, 8",
+        motto: "“İncelerim, analiz eder ve mükemmelleştiririm.”",
+        personality: "Keskin analiz yeteneği, tertipli yapısı ve detaylardaki ustalığıyla Başak burcu; karmaşayı düzene sokan zodyak ustasıdır. Faydalı olma arzusu ve pratik zekası ile herkesin sığındığı bir limandır.",
+        strengths: ["Kusursuz çalışma disiplini ve titizlik", "Çözüm odaklı ve pratik zeka", "İyilikseverlik ve dürüstlük"],
+        weaknesses: ["Aşırı özeleştiri ve memnuniyetsizlik", "Ayrıntılarda kaybolup bütünü kaçırma", "Endişeli ve evhamlı düşünce yapısı"],
+        love: "Aşkını sözlerle değil, hayatı senin için kolaylaştırarak ve her an destek olarak somut bir şekilde gösterir.",
+        career: "Veri analitiği, tıp ve sağlık, muhasebe, editörlük, kalite kontrol ve araştırma-geliştirme birimlerinde vazgeçilmezdir.",
+        bestMatches: ["Boğa", "Oğlak", "Yengeç", "Akrep"],
+        challengingMatches: ["İkizler", "Yay"],
+        advice: "Mükemmellik bir varış noktası değil, bir yolculuktur; kusurların da kendine has bir güzelliği olduğunu unutma."
+      },
+      {
+        id: "terazi",
+        name: "Terazi",
+        latin: "Libra",
+        glyph: "♎",
+        element: "Hava",
+        modality: "Öncü",
+        planet: "Venüs",
+        dates: "23 Eylül - 22 Ekim",
+        stone: "Lapis Lazuli & Pembe Kuvars",
+        color: "Gül Kurusu, Pastel Mavi & Pudra",
+        luckyNumber: "6, 7",
+        motto: "“Dengelerim, uyum ve adalet sağlarım.”",
+        personality: "Zarafeti, estetik duygusu ve adalet terazisiyle bilinen Terazi; kutuplaşmaların ortasında daima uzlaşmayı ve huzuru yeşertir. Nezaketi, şık tarzı ve tatlı diliyle insanları bir araya getirir.",
+        strengths: ["Adalet duygusu ve arabuluculuk", "Sosyal zarafet ve nezaket", "Güçlü estetik ve sanat anlayışı"],
+        weaknesses: ["Kararsızlık ve net tavır alamama", "Çatışmadan kaçmak için ödün verme", "Onaylanma ihtiyacı"],
+        love: "Romantizmin ve ortaklığın simgesidir. Dengeli, saygılı, sanatsal paylaşımlara açık ve nazik birliktelikleri yeğler.",
+        career: "Hukuk ve avukatlık, diplomasi, moda tasarımı, mimarlık, halkla ilişkiler ve sanat danışmanlığında öne çıkar.",
+        bestMatches: ["İkizler", "Kova", "Aslan", "Yay"],
+        challengingMatches: ["Yengeç", "Oğlak"],
+        advice: "Başkalarını mutlu etmeye çalışırken kendi kalbinin ne istediğini arka plana itmekten vazgeç."
+      },
+      {
+        id: "akrep",
+        name: "Akrep",
+        latin: "Scorpio",
+        glyph: "♏",
+        element: "Su",
+        modality: "Sabit",
+        planet: "Plüton & Mars",
+        dates: "23 Ekim - 21 Kasım",
+        stone: "Obsidyen & Topaz",
+        color: "Bordo, Gece Siyahı & Koyu Mor",
+        luckyNumber: "8, 9",
+        motto: "“Dönüştürürüm, arzular ve derinleşirim.”",
+        personality: "Manyetik çekim gücü, sırdaşlığı ve yılmaz iradesiyle Akrep; zodyakın en gizemli ve güçlü burcudur. Yüzeysel olan hiçbir şeye inanmaz; gerçeğin ve ruhun en derin katmanlarına kadar araştırır.",
+        strengths: ["Sarsılmaz irade ve küllerinden doğma gücü", "Olağanüstü sezgi ve insan sarraflığı", "Sonsuz sadakat ve tutku"],
+        weaknesses: ["Şüphecilik ve kıskançlık", "Kin tutma ve intikamcı refleksler", "Duygularını gizleme ve ketumluk"],
+        love: "Ya hep ya hiç anlayışıyla sever. Partneriyle ruhsal ve bedensel düzeyde tam bir birleşme ve mutlak sadakat bekler.",
+        career: "Cerrahi, psikiyatri, kriminoloji, dedektiflik, gizli araştırmalar, kriz yönetimi ve yatırım bankacılığında rakipsizdir.",
+        bestMatches: ["Balık", "Yengeç", "Başak", "Oğlak"],
+        challengingMatches: ["Aslan", "Kova"],
+        advice: "Bırak geçmişin yükleri geride kalsın; affetmek karşındakine bir lütuf değil, senin ruhuna sunulmuş en büyük özgürlüktür."
+      },
+      {
+        id: "yay",
+        name: "Yay",
+        latin: "Sagittarius",
+        glyph: "♐",
+        element: "Ateş",
+        modality: "Değişken",
+        planet: "Jüpiter",
+        dates: "22 Kasım - 21 Aralık",
+        stone: "Turkuaz & Ametist",
+        color: "Gece Mavisi & Mor",
+        luckyNumber: "3, 7",
+        motto: "“Görürüm, keşfeder ve felsefe üretirim.”",
+        personality: "Bitmek bilmeyen iyimserliği, macera tutkusu ve geniş ufuklarıyla Yay burcu; bir kaşif ve filozoftur. Özgürlüğe olan tutkusu, açık sözlülüğü ve pozitif aurası her yere neşe yayar.",
+        strengths: ["Sonsuz pozitiflik ve espri kabiliyeti", "Felsefi derinlik ve vizyonerlik", "Cesur gezginlik ve açık fikirlilik"],
+        weaknesses: ["Patavatsızlık derecesinde dobra olma", "Sorumluluklardan kaçma ve savrukluk", "Aşırı risk alma eğilimi"],
+        love: "Onunla aşk bir dünya turuna çıkmak gibidir. Birlikte gülebileceği, dünyayı keşfedeceği ve kanatlarını kırmayacak yol arkadaşları ister.",
+        career: "Akademisyenlik, turizm, yayıncılık, uluslararası ilişkiler, yabancı diller ve felsefi danışmanlıkta parlar.",
+        bestMatches: ["Koç", "Aslan", "Terazi", "Kova"],
+        challengingMatches: ["Başak", "Balık"],
+        advice: "Sözlerinin ok gibi fırlamadan önce başkalarının kalbini yaralayabileceğini aklından çıkarma."
+      },
+      {
+        id: "oglak",
+        name: "Oğlak",
+        latin: "Capricorn",
+        glyph: "♑",
+        element: "Toprak",
+        modality: "Öncü",
+        planet: "Satürn",
+        dates: "22 Aralık - 19 Ocak",
+        stone: "Grena & Oniks",
+        color: "Kömür Grisi, Kahverengi & Siyah",
+        luckyNumber: "4, 8",
+        motto: "“Kullanırım, inşa eder ve yönetirim.”",
+        personality: "Stratejik aklı, sabırlı tırmanışı ve çelik gibi disipliniyle Oğlak; zirvelerin fatihidir. Zorluklar onu yıldırmak yerine daha da biler. Güvenilir, saygın ve geleceği sağlam temellere oturtan bir yapıdır.",
+        strengths: ["Kusursuz sabır ve sorumluluk bilinci", "Stratejik vizyon ve organizasyon yetisi", "Sözünün eri ve güvenilir karakter"],
+        weaknesses: ["Katılık, melankoli ve karamsarlık", "Duygularını ifade etmekte tutukluk", "Aşırı işkoliklik ve kuralcılık"],
+        love: "Aşka ciddiyetle ve uzun vadeli bakar. Güven sağlandıktan sonra sadık, sarsılmaz bir hayat arkadaşına dönüşür.",
+        career: "Üst düzey yöneticilik, devlet kademeleri, inşaat, mühendislik, finans ve kurumsal liderlikte zirveye çıkar.",
+        bestMatches: ["Boğa", "Başak", "Akrep", "Balık"],
+        challengingMatches: ["Koç", "Terazi"],
+        advice: "Hayat yalnızca başarılması gereken hedeflerden ibaret değildir; durup nefes almak ve eğlenmek de bir ihtiyaçtır."
+      },
+      {
+        id: "kova",
+        name: "Kova",
+        latin: "Aquarius",
+        glyph: "♒",
+        element: "Hava",
+        modality: "Sabit",
+        planet: "Uranüs & Satürn",
+        dates: "20 Ocak - 18 Şubat",
+        stone: "Ametist & Akuamarin",
+        color: "Elektrik Mavisi & Turkuaz",
+        luckyNumber: "4, 11",
+        motto: "“Bilirim, yeniler ve özgürleştiririm.”",
+        personality: "Geleceğin vizyonunu bugünden taşıyan Kova burcu; tabuları yıkan, yenilikçi ve hümanist karakteriyle bilinir. Bireysel özgürlüğüne düşkündür, klişelerden nefret eder ve sıra dışı fikirleriyle toplumu ileri taşır.",
+        strengths: ["Orijinal fikirler ve dahi zeka", "İnsancıl, adil ve eşitlikçi vizyon", "Bağımsızlık ve yenilikçilik"],
+        weaknesses: ["Duygusal mesafeli ve soğuk duruş", "Aşırı aykırılık ve dik kafalılık", "Öngörülemez tavırlar"],
+        love: "Önce en yakın dost, sonra sevgili olur. Zihinsel uyum, bireysel alana saygı ve entelektüel derinlik ön plandadır.",
+        career: "Bilişim teknolojileri, yapay zeka, bilimsel araştırmalar, uzay bilimleri, sosyal girişimcilik ve insan hakları savunuculuğu.",
+        bestMatches: ["İkizler", "Terazi", "Koç", "Yay"],
+        challengingMatches: ["Boğa", "Akrep"],
+        advice: "Düşüncelerin ne kadar parlak olursa olsun, insanları sadece akılla değil, kalple de anlayabileceğini unutma."
+      },
+      {
+        id: "balik",
+        name: "Balık",
+        latin: "Pisces",
+        glyph: "♓",
+        element: "Su",
+        modality: "Değişken",
+        planet: "Neptün & Jüpiter",
+        dates: "19 Şubat - 20 Mart",
+        stone: "Akuamarin & Ametist",
+        color: "Deniz Yeşili, Leylak & Menekşe",
+        luckyNumber: "7, 12",
+        motto: "“İnanırım, hisseder ve hayal ederim.”",
+        personality: "Zodyak döngüsünün son bilgesi olan Balık burcu; sınırsız hayal gücü, evrensel merhameti ve mistik sezgileriyle tanınır. Sanata yatkın ruhu, etrafındaki tüm acıları ve sevinçleri kendi içinde hisseden devasa bir kalbe sahiptir.",
+        strengths: ["Derin şefkat ve sınırsız yaratıcılık", "Geleceği sezen güçlü rüyalar ve sezgiler", "Fedakarlık ve sanatsal yetenek"],
+        weaknesses: ["Gerçeklerden kaçıp hayal dünyasına sığınma", "Sınır çizememe ve kurban psikolojisi", "Aşırı hassasiyet ve kararsızlık"],
+        love: "Ruh ikizini arar. Sevdiğini adeta ilahi bir bağlılıkla kucaklar, romantizmin en şiirsel tonlarını yaşatır.",
+        career: "Müzik, sinema, edebiyat, psikoterapi, manevi danışmanlık, şifa sanatları ve fotoğrafçılıkta ruhunu ortaya koyar.",
+        bestMatches: ["Yengeç", "Akrep", "Boğa", "Oğlak"],
+        challengingMatches: ["İkizler", "Yay"],
+        advice: "Kendi enerjini korumak için 'hayır' demeyi öğrenmeli ve ayaklarını dünya gerçeğine sağlam basmalısın."
+      }
+    ];
+
+    /**
+     * Determines Zodiac Sign based on day (1-31) and month (1-12)
+     */
+    function calculateZodiacSign(day, month) {
+      if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "koc";
+      if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "boga";
+      if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "ikizler";
+      if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "yengec";
+      if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "aslan";
+      if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "basak";
+      if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "terazi";
+      if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "akrep";
+      if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "yay";
+      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "oglak";
+      if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "kova";
+      if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return "balik";
+      return null;
+    }
+
+    // Helper: Validates days in selected month (e.g. Feb max 29)
+    function getMaxDaysInMonth(month) {
+      if (month === 2) return 29; // Generous leap year validation
+      if ([4, 6, 9, 11].includes(month)) return 30;
+      return 31;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const birthDaySelect = document.getElementById("birthDay");
+      const birthMonthSelect = document.getElementById("birthMonth");
+      const zodiacForm = document.getElementById("zodiacForm");
+      const formFeedback = document.getElementById("formFeedback");
+      const feedbackText = document.getElementById("feedbackText");
+      const resultSection = document.getElementById("resultSection");
+      const signsGrid = document.getElementById("signsGrid");
+
+      // Populate Days 1 to 31
+      function updateDaysDropdown(maxDays = 31) {
+        const currentVal = parseInt(birthDaySelect.value) || null;
+        birthDaySelect.innerHTML = '<option value="" disabled selected class="bg-cosmic-800 text-slate-400">Gün Seçiniz</option>';
+        for (let i = 1; i <= maxDays; i++) {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = `${i}. Gün`;
+          opt.className = "bg-cosmic-800 text-white";
+          if (currentVal === i && i <= maxDays) {
+            opt.selected = true;
+          }
+          birthDaySelect.appendChild(opt);
+        }
+      }
+      updateDaysDropdown(31);
+
+      // Adjust max days when month changes
+      birthMonthSelect.addEventListener("change", () => {
+        const m = parseInt(birthMonthSelect.value);
+        if (m) {
+          const maxD = getMaxDaysInMonth(m);
+          updateDaysDropdown(maxD);
+        }
+      });
+
+      function renderSignsGrid(filter = "all") {
+        signsGrid.innerHTML = "";
+        const filtered = filter === "all" ? ZODIAC_DATA : ZODIAC_DATA.filter(s => s.element === filter);
+
+        filtered.forEach(sign => {
+          const card = document.createElement("div");
+          card.className = "glass-card p-4 rounded-2xl flex flex-col items-center text-center cursor-pointer hover:border-amber-400/60 hover:scale-[1.03] transition duration-300 group";
+          
+          let elementColor = "text-amber-400";
+          if (sign.element === "Su") elementColor = "text-cyan-400";
+          if (sign.element === "Toprak") elementColor = "text-emerald-400";
+          if (sign.element === "Hava") elementColor = "text-indigo-300";
+
+          card.innerHTML = `
+            <div class="text-3xl font-cinzel text-cosmic-gold mb-1.5 group-hover:scale-110 transition-transform">${sign.glyph}</div>
+            <h5 class="text-sm font-bold text-white font-cinzel">${sign.name}</h5>
+            <span class="text-[10px] text-slate-400 font-mono mb-2">${sign.dates.split('-')[0].trim()}</span>
+            <span class="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/5 ${elementColor} border border-white/5">
+              ${sign.element}
+            </span>
+          `;
+
+          card.addEventListener("click", () => {
+            displaySignDetails(sign.id);
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+
+          signsGrid.appendChild(card);
+        });
+      }
+
+      renderSignsGrid("all");
+
+      // Filter button events
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".filter-btn").forEach(b => {
+            b.classList.remove("active", "text-amber-300", "bg-cosmic-700");
+            b.classList.add("text-slate-400");
+          });
+          btn.classList.add("active", "text-amber-300", "bg-cosmic-700");
+          btn.classList.remove("text-slate-400");
+          renderSignsGrid(btn.getAttribute("data-element"));
+        });
+      });
+
+      zodiacForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        formFeedback.classList.add("hidden");
+
+        const day = parseInt(birthDaySelect.value);
+        const month = parseInt(birthMonthSelect.value);
+
+        if (!day || !month) {
+          showFeedback("Lütfen hem günü hem de ayı seçiniz.");
+          return;
+        }
+
+        const maxDays = getMaxDaysInMonth(month);
+        if (day > maxDays) {
+          showFeedback(`Seçilen ay en fazla ${maxDays} gün çekmektedir.`);
+          return;
+        }
+
+        const signId = calculateZodiacSign(day, month);
+        if (signId) {
+          displaySignDetails(signId);
+          resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          showFeedback("Burç hesaplanırken bir hata oluştu. Lütfen tarih bilgilerinizi kontrol ediniz.");
+        }
+      });
+
+      function showFeedback(msg) {
+        feedbackText.textContent = msg;
+        formFeedback.classList.remove("hidden");
+      }
+
+      function displaySignDetails(signId) {
+        const sign = ZODIAC_DATA.find(s => s.id === signId);
+        if (!sign) return;
+
+        // Visual fields
+        document.getElementById("bgWatermark").textContent = sign.glyph;
+        document.getElementById("resSignGlyph").textContent = sign.glyph;
+        document.getElementById("resSignName").textContent = `${sign.name} Burcu`;
+        document.getElementById("resLatinName").textContent = `(${sign.latin})`;
+        document.getElementById("resDateRange").innerHTML = `<i class="fa-regular fa-clock"></i> ${sign.dates}`;
+        document.getElementById("resMotto").textContent = sign.motto;
+
+        // Badges
+        const elBadge = document.getElementById("resElementBadge");
+        elBadge.textContent = sign.element;
+        if (sign.element === "Ateş") {
+          elBadge.className = "absolute -bottom-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white shadow";
+        } else if (sign.element === "Toprak") {
+          elBadge.className = "absolute -bottom-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white shadow";
+        } else if (sign.element === "Hava") {
+          elBadge.className = "absolute -bottom-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-500 text-white shadow";
+        } else {
+          elBadge.className = "absolute -bottom-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-500 text-white shadow";
+        }
+
+        // Quick attributes
+        document.getElementById("resPlanet").textContent = sign.planet;
+        document.getElementById("resModality").textContent = sign.modality;
+        document.getElementById("resStone").textContent = sign.stone;
+        document.getElementById("resColor").textContent = sign.color;
+        document.getElementById("resLuckyNumber").textContent = sign.luckyNumber;
+
+        // Long Descriptions
+        document.getElementById("resPersonality").textContent = sign.personality;
+        document.getElementById("resLove").textContent = sign.love;
+        document.getElementById("resCareer").textContent = sign.career;
+        document.getElementById("resAdvice").textContent = sign.advice;
+
+        // Strengths & Weaknesses
+        const strList = document.getElementById("resStrengths");
+        strList.innerHTML = "";
+        sign.strengths.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          strList.appendChild(li);
+        });
+
+        const weakList = document.getElementById("resWeaknesses");
+        weakList.innerHTML = "";
+        sign.weaknesses.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          weakList.appendChild(li);
+        });
+
+        // Best Matches Tags
+        const matchesContainer = document.getElementById("resBestMatches");
+        matchesContainer.innerHTML = "";
+        sign.bestMatches.forEach(match => {
+          const span = document.createElement("span");
+          span.className = "px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold";
+          span.textContent = match;
+          matchesContainer.appendChild(span);
+        });
+
+        // Challenging Matches Tags
+        const chalContainer = document.getElementById("resChallengingMatches");
+        chalContainer.innerHTML = "";
+        sign.challengingMatches.forEach(chal => {
+          const span = document.createElement("span");
+          span.className = "px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-semibold";
+          span.textContent = chal;
+          chalContainer.appendChild(span);
+        });
+
+        // Make section visible with animation
+        resultSection.classList.remove("hidden");
+        resultSection.classList.add("animate-fade-in");
+      }
+    });
+
+    (function initStarfield() {
+      const canvas = document.getElementById("starfield");
+      const ctx = canvas.getContext("2d");
+      let width, height;
+      let stars = [];
+      const STAR_COUNT = 140;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+
+      function createStars() {
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            size: Math.random() * 1.5 + 0.3,
+            alpha: Math.random() * 0.8 + 0.2,
+            speed: Math.random() * 0.015 + 0.005,
+            direction: Math.random() > 0.5 ? 1 : -1
+          });
+        }
+      }
+
+      function drawStars() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
+          s.alpha += s.speed * s.direction;
+          if (s.alpha > 0.95 || s.alpha < 0.15) {
+            s.direction *= -1;
+          }
+
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(235, 230, 255, ${s.alpha})`;
+          ctx.shadowBlur = s.size > 1 ? 5 : 0;
+          ctx.shadowColor = "#f3c959";
+          ctx.fill();
+        }
+
+        requestAnimationFrame(drawStars);
+      }
+
+      window.addEventListener("resize", () => {
+        resize();
+        createStars();
+      });
+
+      resize();
+      createStars();
+      drawStars();
+    })();
+  </script>
+</body>
+</html>
